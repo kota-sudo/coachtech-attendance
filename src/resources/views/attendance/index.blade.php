@@ -6,13 +6,6 @@
 
 @section('title', '勤怠')
 
-@section('header-actions')
-    <a href="{{ route('attendance.list') }}" class="nav-link">勤怠一覧</a>
-    <form class="inline" method="POST" action="{{ route('logout') }}">
-        @csrf
-        <button type="submit" class="link">ログアウト</button>
-    </form>
-@endsection
 
 @section('content')
     <div class="attendance-card">

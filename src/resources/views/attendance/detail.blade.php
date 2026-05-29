@@ -2,13 +2,6 @@
 
 @section('title', '勤怠詳細')
 
-@section('header-actions')
-    <a href="{{ route('attendance.list', ['month' => $attendance->work_date->format('Y-m')]) }}" class="nav-link">一覧に戻る</a>
-    <form class="inline" method="POST" action="{{ route('logout') }}">
-        @csrf
-        <button type="submit" class="link">ログアウト</button>
-    </form>
-@endsection
 
 @section('content')
     <div class="list-card detail-card">

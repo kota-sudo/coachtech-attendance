@@ -2,12 +2,6 @@
 
 @section('title', '勤怠一覧（管理者）')
 
-@section('header-actions')
-    <form class="inline" method="POST" action="{{ route('admin.logout') }}">
-        @csrf
-        <button type="submit" class="link">ログアウト</button>
-    </form>
-@endsection
 
 @section('content')
     <div class="list-card">

@@ -2,13 +2,6 @@
 
 @section('title', '月次勤怠')
 
-@section('header-actions')
-    <a href="{{ route('admin.staff.list') }}" class="nav-link">スタッフ一覧</a>
-    <form class="inline" method="POST" action="{{ route('admin.logout') }}">
-        @csrf
-        <button type="submit" class="link">ログアウト</button>
-    </form>
-@endsection
 
 @section('content')
     <div class="list-card">

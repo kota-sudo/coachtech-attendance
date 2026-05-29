@@ -8,7 +8,9 @@
         body { font-family: sans-serif; margin: 0; padding: 2rem; background: #f5f5f5; }
         .app-header { max-width: 960px; margin: 0 auto 1.5rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
         .app-header h1 { font-size: 1.25rem; margin: 0; }
-        .app-header-actions { display: flex; align-items: center; gap: 1rem; }
+        .app-header-actions { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; justify-content: flex-end; }
+        .main-nav { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+        a.nav-link.is-current { font-weight: 700; text-decoration: none; color: #000; }
         .app-main { max-width: 960px; margin: 0 auto; }
         form.inline { display: inline; }
         button.link, a.nav-link { background: none; border: none; color: #2563eb; cursor: pointer; text-decoration: underline; font-size: 1rem; }
@@ -64,7 +66,10 @@
     <header class="app-header">
         <h1>@yield('title')</h1>
         <div class="app-header-actions">
-            @yield('header-actions')
+            @auth
+                @include('layouts.partials.main-nav')
+            @endauth
+            @yield('header-extra')
         </div>
     </header>
     <main class="app-main">

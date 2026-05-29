@@ -7,13 +7,6 @@
 
 @section('title', '修正申請承認')
 
-@section('header-actions')
-    <a href="{{ route('stamp_correction_request.list', ['status' => $correctionRequest->status === AttendanceCorrectionRequestStatus::Pending ? 'pending' : 'approved']) }}" class="nav-link">申請一覧</a>
-    <form class="inline" method="POST" action="{{ route('admin.logout') }}">
-        @csrf
-        <button type="submit" class="link">ログアウト</button>
-    </form>
-@endsection
 
 @section('content')
     <div class="list-card detail-card">

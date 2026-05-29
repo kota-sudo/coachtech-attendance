@@ -6,21 +6,6 @@
 
 @section('title', '申請一覧')
 
-@section('header-actions')
-    @if ($isAdmin)
-        <a href="{{ route('admin.attendance.list') }}" class="nav-link">日次勤怠</a>
-        <form class="inline" method="POST" action="{{ route('admin.logout') }}">
-            @csrf
-            <button type="submit" class="link">ログアウト</button>
-        </form>
-    @else
-        <a href="{{ route('attendance.list') }}" class="nav-link">勤怠一覧</a>
-        <form class="inline" method="POST" action="{{ route('logout') }}">
-            @csrf
-            <button type="submit" class="link">ログアウト</button>
-        </form>
-    @endif
-@endsection
 
 @section('content')
     <div class="list-card">
