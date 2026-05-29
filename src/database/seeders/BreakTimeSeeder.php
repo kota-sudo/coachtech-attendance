@@ -2,16 +2,21 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Attendance;
+use App\Models\BreakTime;
 use Illuminate\Database\Seeder;
 
 class BreakTimeSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        //
+        Attendance::query()->each(function (Attendance $attendance) {
+            $date = $attendance->work_date->format('Y-m-d');
+
+            BreakTime::factory()->forAttendance($attendance)->create([
+                'break_start' => "{$date} 12:00:00",
+                'break_end' => "{$date} 13:00:00",
+            ]);
+        });
     }
 }

@@ -6,22 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('attendance_correction_breaks', function (Blueprint $table) {
+        Schema::create('break_times', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('attendance_id')->constrained()->cascadeOnDelete();
+            $table->dateTime('break_start');
+            $table->dateTime('break_end')->nullable();
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('attendance_correction_breaks');
+        Schema::dropIfExists('break_times');
     }
 };

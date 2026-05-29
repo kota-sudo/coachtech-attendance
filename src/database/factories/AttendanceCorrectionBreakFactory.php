@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\AttendanceCorrectionBreak;
+use App\Models\AttendanceCorrectionRequest;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -10,15 +11,22 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class AttendanceCorrectionBreakFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
+        $breakStart = fake()->dateTimeBetween('-1 month', 'now');
+        $breakEnd = (clone $breakStart)->modify('+1 hour');
+
         return [
-            //
+            'attendance_correction_request_id' => AttendanceCorrectionRequest::factory(),
+            'break_start' => $breakStart,
+            'break_end' => $breakEnd,
         ];
+    }
+
+    public function forCorrectionRequest(AttendanceCorrectionRequest $request): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'attendance_correction_request_id' => $request->id,
+        ]);
     }
 }
