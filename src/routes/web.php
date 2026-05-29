@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Admin\AdminAttendanceController;
 use App\Http\Controllers\Admin\AdminAttendanceListController;
+use App\Http\Controllers\Admin\AdminStaffAttendanceController;
+use App\Http\Controllers\Admin\AdminStaffListController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceListController;
 use App\Http\Controllers\Auth\AdminAuthenticatedSessionController;
@@ -43,8 +45,13 @@ Route::middleware(['auth', 'user'])->group(function () {
 });
 
 Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/staff/list', [AdminStaffListController::class, 'index'])
+        ->name('admin.staff.list');
+
     Route::get('/admin/attendance/list', [AdminAttendanceListController::class, 'index'])
         ->name('admin.attendance.list');
+    Route::get('/admin/attendance/staff/{user}', [AdminStaffAttendanceController::class, 'show'])
+        ->name('admin.attendance.staff.show');
     Route::get('/admin/attendance/{attendance}', [AdminAttendanceController::class, 'show'])
         ->name('admin.attendance.show');
     Route::post('/admin/attendance/{attendance}', [AdminAttendanceController::class, 'update'])
