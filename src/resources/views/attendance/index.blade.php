@@ -4,7 +4,7 @@
     use App\Enums\AttendanceStatus;
 @endphp
 
-@section('title', '勤怠')
+@section('title', '勤怠打刻')
 
 
 @section('content')
