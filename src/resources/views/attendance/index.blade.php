@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@php
+    use App\Enums\AttendanceStatus;
+@endphp
+
 @section('title', '勤怠')
 
 @section('header-actions')
@@ -10,6 +14,58 @@
 @endsection
 
 @section('content')
-    <p>勤怠打刻画面（実装予定）</p>
-    <p>ログイン中: {{ auth()->user()->name }}（一般ユーザー）</p>
+    <div class="attendance-card">
+        <p class="attendance-date">{{ $todayLabel }}</p>
+        <p class="attendance-clock" id="current-time" aria-live="polite"></p>
+
+        <div class="attendance-status">
+            <span class="attendance-status-label">勤務ステータス</span>
+            <span class="attendance-status-value">{{ $status->label() }}</span>
+        </div>
+
+        <div class="attendance-actions">
+            @if ($status === AttendanceStatus::OffDuty)
+                <form method="POST" action="{{ route('attendance.clock-in') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-primary">出勤</button>
+                </form>
+            @elseif ($status === AttendanceStatus::Working)
+                <form method="POST" action="{{ route('attendance.break-in') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-secondary">休憩入</button>
+                </form>
+                <form method="POST" action="{{ route('attendance.clock-out') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-primary">退勤</button>
+                </form>
+            @elseif ($status === AttendanceStatus::Breaking)
+                <form method="POST" action="{{ route('attendance.break-out') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-secondary">休憩戻</button>
+                </form>
+            @else
+                <p class="attendance-message">お疲れ様でした。</p>
+            @endif
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const el = document.getElementById('current-time');
+            const formatter = new Intl.DateTimeFormat('ja-JP', {
+                timeZone: 'Asia/Tokyo',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false,
+            });
+
+            function tick() {
+                el.textContent = formatter.format(new Date());
+            }
+
+            tick();
+            setInterval(tick, 1000);
+        })();
+    </script>
 @endsection

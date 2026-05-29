@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\AttendanceStatus;
+use App\Services\AttendanceService;
 use Database\Factories\AttendanceFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -48,5 +50,20 @@ class Attendance extends Model
     public function latestCorrectionRequest(): HasOne
     {
         return $this->hasOne(AttendanceCorrectionRequest::class)->latestOfMany();
+    }
+
+    public function hasOpenBreak(): bool
+    {
+        return $this->breakTimes()->whereNull('break_end')->exists();
+    }
+
+    public function openBreak(): ?BreakTime
+    {
+        return $this->breakTimes()->whereNull('break_end')->latest('id')->first();
+    }
+
+    public function status(): AttendanceStatus
+    {
+        return app(AttendanceService::class)->resolveStatus($this);
     }
 }
