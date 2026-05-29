@@ -50,6 +50,11 @@
         .break-input-row { display: flex; align-items: center; gap: .5rem; margin-bottom: .5rem; flex-wrap: wrap; }
         .break-input-row input { width: auto; flex: 0 1 140px; }
         .error { color: #dc2626; font-size: .875rem; margin: .25rem 0 0; }
+                .tab-nav { display: flex; gap: 0; margin-bottom: 1.5rem; border-bottom: 1px solid #e5e5e5; }
+        .tab-link { padding: .75rem 1.5rem; text-decoration: none; color: #666; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+        .tab-link.is-active { color: #000; font-weight: 600; border-bottom-color: #000; }
+        .tab-link:hover { color: #000; }
+        .cell-note { max-width: 240px; text-align: left; word-break: break-word; }
         .flash-status { background: #ecfdf5; color: #047857; padding: .75rem; border-radius: 4px; margin: 0 0 1rem; }
     </style>
 </head>
