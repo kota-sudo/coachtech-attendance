@@ -36,6 +36,21 @@
         .attendance-table th { background: #f9fafb; font-weight: 600; }
         .attendance-table td:empty::before { content: ''; }
         .attendance-table a { color: #2563eb; }
+        .detail-card { padding: 1.5rem 2rem; }
+        .detail-display { margin: 0 0 2rem; }
+        .detail-row { display: grid; grid-template-columns: 120px 1fr; gap: .5rem 1rem; padding: .75rem 0; border-bottom: 1px solid #e5e5e5; }
+        .detail-row dt { font-weight: 600; margin: 0; }
+        .detail-row dd { margin: 0; }
+        .detail-pending-message { color: #dc2626; font-weight: 600; text-align: center; margin: 1rem 0 0; }
+        .detail-form-title { font-size: 1.125rem; margin: 0 0 1rem; }
+        .detail-form .form-group { margin-bottom: 1.25rem; }
+        .detail-form label { display: block; font-weight: 600; margin-bottom: .375rem; font-size: .875rem; }
+        .detail-form input[type=time], .detail-form textarea { width: 100%; max-width: 320px; padding: .5rem; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; }
+        .detail-form textarea { max-width: 100%; }
+        .break-input-row { display: flex; align-items: center; gap: .5rem; margin-bottom: .5rem; flex-wrap: wrap; }
+        .break-input-row input { width: auto; flex: 0 1 140px; }
+        .error { color: #dc2626; font-size: .875rem; margin: .25rem 0 0; }
+        .flash-status { background: #ecfdf5; color: #047857; padding: .75rem; border-radius: 4px; margin: 0 0 1rem; }
     </style>
 </head>
 <body>

@@ -31,6 +31,7 @@ Route::middleware(['auth', 'user'])->group(function () {
 
     Route::get('/attendance/list', [AttendanceListController::class, 'index'])->name('attendance.list');
     Route::get('/attendance/detail/{attendance}', [AttendanceListController::class, 'detail'])->name('attendance.detail');
+    Route::post('/attendance/detail/{attendance}', [AttendanceListController::class, 'store'])->name('attendance.detail.store');
 
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 });

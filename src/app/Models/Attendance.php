@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\AttendanceCorrectionRequestStatus;
 use App\Enums\AttendanceStatus;
 use App\Services\AttendanceService;
 use Database\Factories\AttendanceFactory;
@@ -50,6 +51,18 @@ class Attendance extends Model
     public function latestCorrectionRequest(): HasOne
     {
         return $this->hasOne(AttendanceCorrectionRequest::class)->latestOfMany();
+    }
+
+    public function pendingCorrectionRequest(): ?AttendanceCorrectionRequest
+    {
+        return $this->correctionRequests()
+            ->where('status', AttendanceCorrectionRequestStatus::Pending)
+            ->first();
+    }
+
+    public function hasPendingCorrectionRequest(): bool
+    {
+        return $this->pendingCorrectionRequest() !== null;
     }
 
     public function hasOpenBreak(): bool
