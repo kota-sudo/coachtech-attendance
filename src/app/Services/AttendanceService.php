@@ -7,6 +7,7 @@ use App\Models\Attendance;
 use App\Models\BreakTime;
 use App\Models\User;
 use Carbon\Carbon;
+
 class AttendanceService
 {
     private const TIMEZONE = 'Asia/Tokyo';
@@ -104,5 +105,132 @@ class AttendanceService
         $attendance->update([
             'clock_out' => $this->now(),
         ]);
+    }
+
+    public function parseMonth(?string $month): Carbon
+    {
+        if ($month !== null && preg_match('/^\d{4}-\d{2}$/', $month)) {
+            return Carbon::createFromFormat('Y-m', $month, self::TIMEZONE)->startOfMonth();
+        }
+
+        return $this->today()->copy()->startOfMonth();
+    }
+
+    /**
+     * @return array{
+     *     monthLabel: string,
+     *     prevMonth: string,
+     *     nextMonth: string,
+     *     rows: list<array{
+     *         date_label: string,
+     *         clock_in: ?string,
+     *         clock_out: ?string,
+     *         break_total: ?string,
+     *         work_total: ?string,
+     *         attendance_id: ?int
+     *     }>
+     * }
+     */
+    public function buildMonthlyList(User $user, ?string $monthParam): array
+    {
+        $monthStart = $this->parseMonth($monthParam);
+        $monthEnd = $monthStart->copy()->endOfMonth();
+
+        $attendances = Attendance::query()
+            ->where('user_id', $user->id)
+            ->whereBetween('work_date', [
+                $monthStart->toDateString(),
+                $monthEnd->toDateString(),
+            ])
+            ->with('breakTimes')
+            ->get()
+            ->keyBy(fn (Attendance $attendance) => $attendance->work_date->format('Y-m-d'));
+
+        $rows = [];
+
+        for ($date = $monthStart->copy(); $date->lte($monthEnd); $date->addDay()) {
+            $key = $date->format('Y-m-d');
+            $attendance = $attendances->get($key);
+
+            $rows[] = $this->buildListRow($date, $attendance);
+        }
+
+        return [
+            'monthLabel' => $monthStart->locale('ja')->isoFormat('YYYY年M月'),
+            'prevMonth' => $monthStart->copy()->subMonth()->format('Y-m'),
+            'nextMonth' => $monthStart->copy()->addMonth()->format('Y-m'),
+            'rows' => $rows,
+        ];
+    }
+
+    /**
+     * @return array{
+     *     date_label: string,
+     *     clock_in: ?string,
+     *     clock_out: ?string,
+     *     break_total: ?string,
+     *     work_total: ?string,
+     *     attendance_id: ?int
+     * }
+     */
+    private function buildListRow(Carbon $date, ?Attendance $attendance): array
+    {
+        $row = [
+            'date_label' => $date->locale('ja')->isoFormat('M/D(ddd)'),
+            'clock_in' => null,
+            'clock_out' => null,
+            'break_total' => null,
+            'work_total' => null,
+            'attendance_id' => null,
+        ];
+
+        if ($attendance === null) {
+            return $row;
+        }
+
+        $row['attendance_id'] = $attendance->id;
+        $row['clock_in'] = $attendance->clock_in?->timezone(self::TIMEZONE)->format('H:i');
+        $row['clock_out'] = $attendance->clock_out?->timezone(self::TIMEZONE)->format('H:i');
+
+        $breakSeconds = $this->totalBreakSeconds($attendance);
+
+        if ($breakSeconds > 0) {
+            $row['break_total'] = $this->formatDuration($breakSeconds);
+        }
+
+        if ($attendance->clock_in !== null && $attendance->clock_out !== null) {
+            $workSeconds = (int) $attendance->clock_in->diffInSeconds($attendance->clock_out) - $breakSeconds;
+
+            if ($workSeconds >= 0) {
+                $row['work_total'] = $this->formatDuration($workSeconds);
+            }
+        }
+
+        return $row;
+    }
+
+    private function totalBreakSeconds(Attendance $attendance): int
+    {
+        $total = 0;
+        $capEnd = $attendance->clock_out ?? $this->now();
+
+        foreach ($attendance->breakTimes as $break) {
+            if ($break->break_start === null) {
+                continue;
+            }
+
+            $end = $break->break_end ?? $capEnd;
+            $total += (int) $break->break_start->diffInSeconds($end);
+        }
+
+        return $total;
+    }
+
+    private function formatDuration(int $seconds): string
+    {
+        $hours = intdiv($seconds, 3600);
+        $minutes = intdiv($seconds % 3600, 60);
+
+        return sprintf('%d:%02d', $hours, $minutes);
     }
 }

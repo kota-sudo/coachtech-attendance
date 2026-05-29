@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\AttendanceListController;
 use App\Http\Controllers\Auth\AdminAuthenticatedSessionController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
@@ -27,6 +28,9 @@ Route::middleware(['auth', 'user'])->group(function () {
     Route::post('/attendance/break-in', [AttendanceController::class, 'breakIn'])->name('attendance.break-in');
     Route::post('/attendance/break-out', [AttendanceController::class, 'breakOut'])->name('attendance.break-out');
     Route::post('/attendance/clock-out', [AttendanceController::class, 'clockOut'])->name('attendance.clock-out');
+
+    Route::get('/attendance/list', [AttendanceListController::class, 'index'])->name('attendance.list');
+    Route::get('/attendance/detail/{attendance}', [AttendanceListController::class, 'detail'])->name('attendance.detail');
 
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 });

@@ -7,6 +7,7 @@
 @section('title', '勤怠')
 
 @section('header-actions')
+    <a href="{{ route('attendance.list') }}" class="nav-link">勤怠一覧</a>
     <form class="inline" method="POST" action="{{ route('logout') }}">
         @csrf
         <button type="submit" class="link">ログアウト</button>
@@ -27,21 +28,21 @@
             @if ($status === AttendanceStatus::OffDuty)
                 <form method="POST" action="{{ route('attendance.clock-in') }}">
                     @csrf
-                    <button type="submit" class="btn btn-primary">出勤</button>
+                    <button type="submit" class="btn btn-primary" style="width:100%">出勤</button>
                 </form>
             @elseif ($status === AttendanceStatus::Working)
                 <form method="POST" action="{{ route('attendance.break-in') }}">
                     @csrf
-                    <button type="submit" class="btn btn-secondary">休憩入</button>
+                    <button type="submit" class="btn btn-secondary" style="width:100%">休憩入</button>
                 </form>
                 <form method="POST" action="{{ route('attendance.clock-out') }}">
                     @csrf
-                    <button type="submit" class="btn btn-primary">退勤</button>
+                    <button type="submit" class="btn btn-primary" style="width:100%">退勤</button>
                 </form>
             @elseif ($status === AttendanceStatus::Breaking)
                 <form method="POST" action="{{ route('attendance.break-out') }}">
                     @csrf
-                    <button type="submit" class="btn btn-secondary">休憩戻</button>
+                    <button type="submit" class="btn btn-secondary" style="width:100%">休憩戻</button>
                 </form>
             @else
                 <p class="attendance-message">お疲れ様でした。</p>
