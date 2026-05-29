@@ -22,6 +22,7 @@ class Attendance extends Model
         'work_date',
         'clock_in',
         'clock_out',
+        'note',
     ];
 
     protected function casts(): array

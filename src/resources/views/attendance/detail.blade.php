@@ -45,7 +45,7 @@
             </div>
             <div class="detail-row">
                 <dt>備考</dt>
-                <dd>—</dd>
+                <dd>{{ $attendance->note ?: '—' }}</dd>
             </div>
         </dl>
 

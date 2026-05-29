@@ -47,6 +47,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
         ->name('admin.attendance.list');
     Route::get('/admin/attendance/{attendance}', [AdminAttendanceController::class, 'show'])
         ->name('admin.attendance.show');
+    Route::post('/admin/attendance/{attendance}', [AdminAttendanceController::class, 'update'])
+        ->name('admin.attendance.update');
 
     Route::post('/admin/logout', [AdminAuthenticatedSessionController::class, 'destroy'])->name('admin.logout');
 });
