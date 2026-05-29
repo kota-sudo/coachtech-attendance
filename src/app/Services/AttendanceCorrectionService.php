@@ -6,6 +6,8 @@ use App\Enums\AttendanceCorrectionRequestStatus;
 use App\Models\Attendance;
 use App\Models\AttendanceCorrectionBreak;
 use App\Models\AttendanceCorrectionRequest;
+use App\Models\BreakTime;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -41,6 +43,40 @@ class AttendanceCorrectionService
             }
 
             return $correctionRequest;
+        });
+    }
+
+    public function approve(AttendanceCorrectionRequest $correctionRequest, User $admin): void
+    {
+        if ($correctionRequest->status !== AttendanceCorrectionRequestStatus::Pending) {
+            return;
+        }
+
+        DB::transaction(function () use ($correctionRequest, $admin) {
+            $correctionRequest->load(['attendance', 'correctionBreaks']);
+
+            $correctionRequest->update([
+                'status' => AttendanceCorrectionRequestStatus::Approved,
+                'approved_by' => $admin->id,
+                'approved_at' => Carbon::now(self::TIMEZONE),
+            ]);
+
+            $attendance = $correctionRequest->attendance;
+            $attendance->update([
+                'clock_in' => $correctionRequest->requested_clock_in,
+                'clock_out' => $correctionRequest->requested_clock_out,
+                'note' => $correctionRequest->requested_note,
+            ]);
+
+            $attendance->breakTimes()->delete();
+
+            foreach ($correctionRequest->correctionBreaks as $break) {
+                BreakTime::create([
+                    'attendance_id' => $attendance->id,
+                    'break_start' => $break->break_start,
+                    'break_end' => $break->break_end,
+                ]);
+            }
         });
     }
 

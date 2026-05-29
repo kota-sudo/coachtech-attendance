@@ -11,18 +11,23 @@ class StampCorrectionRequestListController extends Controller
 {
     public function index(Request $request): View
     {
+        $user = $request->user();
+        $isAdmin = $user->isAdmin();
         $status = $this->resolveStatus($request->query('status'));
 
-        $requests = AttendanceCorrectionRequest::query()
+        $query = AttendanceCorrectionRequest::query()
             ->where('status', $status)
-            ->whereHas('attendance', fn ($query) => $query->where('user_id', $request->user()->id))
             ->with(['attendance.user'])
-            ->orderByDesc('created_at')
-            ->get();
+            ->orderByDesc('created_at');
+
+        if (! $isAdmin) {
+            $query->whereHas('attendance', fn ($q) => $q->where('user_id', $user->id));
+        }
 
         return view('stamp_correction_request.list', [
             'status' => $status,
-            'requests' => $requests,
+            'requests' => $query->get(),
+            'isAdmin' => $isAdmin,
         ]);
     }
 

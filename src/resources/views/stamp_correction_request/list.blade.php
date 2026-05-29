@@ -7,15 +7,27 @@
 @section('title', '申請一覧')
 
 @section('header-actions')
-    <a href="{{ route('attendance.list') }}" class="nav-link">勤怠一覧</a>
-    <form class="inline" method="POST" action="{{ route('logout') }}">
-        @csrf
-        <button type="submit" class="link">ログアウト</button>
-    </form>
+    @if ($isAdmin)
+        <a href="{{ route('admin.attendance.list') }}" class="nav-link">日次勤怠</a>
+        <form class="inline" method="POST" action="{{ route('admin.logout') }}">
+            @csrf
+            <button type="submit" class="link">ログアウト</button>
+        </form>
+    @else
+        <a href="{{ route('attendance.list') }}" class="nav-link">勤怠一覧</a>
+        <form class="inline" method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" class="link">ログアウト</button>
+        </form>
+    @endif
 @endsection
 
 @section('content')
     <div class="list-card">
+        @if (session('status'))
+            <p class="flash-status">{{ session('status') }}</p>
+        @endif
+
         <nav class="tab-nav">
             <a href="{{ route('stamp_correction_request.list', ['status' => 'pending']) }}"
                class="tab-link {{ $status === AttendanceCorrectionRequestStatus::Pending ? 'is-active' : '' }}">
@@ -48,7 +60,11 @@
                             <td class="cell-note">{{ $correctionRequest->requested_note }}</td>
                             <td>{{ $correctionRequest->created_at->timezone('Asia/Tokyo')->format('Y/m/d H:i') }}</td>
                             <td>
-                                <a href="{{ route('attendance.detail', $correctionRequest->attendance_id) }}">詳細</a>
+                                @if ($isAdmin)
+                                    <a href="{{ route('stamp_correction_request.approve.show', $correctionRequest) }}">詳細</a>
+                                @else
+                                    <a href="{{ route('attendance.detail', $correctionRequest->attendance_id) }}">詳細</a>
+                                @endif
                             </td>
                         </tr>
                     @empty
