@@ -116,6 +116,15 @@ class AttendanceService
         return $this->today()->copy()->startOfMonth();
     }
 
+    public function parseDate(?string $date): Carbon
+    {
+        if ($date !== null && preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+            return Carbon::parse($date, self::TIMEZONE)->startOfDay();
+        }
+
+        return $this->today();
+    }
+
     /**
      * @return array{
      *     monthLabel: string,
@@ -152,7 +161,10 @@ class AttendanceService
             $key = $date->format('Y-m-d');
             $attendance = $attendances->get($key);
 
-            $rows[] = $this->buildListRow($date, $attendance);
+            $rows[] = array_merge(
+                ['date_label' => $date->locale('ja')->isoFormat('M/D(ddd)')],
+                $this->formatAttendanceSummary($attendance),
+            );
         }
 
         return [
@@ -165,7 +177,58 @@ class AttendanceService
 
     /**
      * @return array{
-     *     date_label: string,
+     *     dateLabel: string,
+     *     date: string,
+     *     prevDate: string,
+     *     nextDate: string,
+     *     rows: list<array{
+     *         name: string,
+     *         clock_in: ?string,
+     *         clock_out: ?string,
+     *         break_total: ?string,
+     *         work_total: ?string,
+     *         attendance_id: ?int
+     *     }>
+     * }
+     */
+    public function buildAdminDailyList(?string $dateParam): array
+    {
+        $date = $this->parseDate($dateParam);
+
+        $users = User::query()
+            ->where('is_admin', false)
+            ->orderBy('name')
+            ->get();
+
+        $attendances = Attendance::query()
+            ->whereDate('work_date', $date)
+            ->whereIn('user_id', $users->pluck('id'))
+            ->with('breakTimes')
+            ->get()
+            ->keyBy('user_id');
+
+        $rows = [];
+
+        foreach ($users as $user) {
+            $attendance = $attendances->get($user->id);
+
+            $rows[] = array_merge(
+                ['name' => $user->name],
+                $this->formatAttendanceSummary($attendance),
+            );
+        }
+
+        return [
+            'dateLabel' => $date->locale('ja')->isoFormat('YYYY年M月D日(ddd)'),
+            'date' => $date->format('Y-m-d'),
+            'prevDate' => $date->copy()->subDay()->format('Y-m-d'),
+            'nextDate' => $date->copy()->addDay()->format('Y-m-d'),
+            'rows' => $rows,
+        ];
+    }
+
+    /**
+     * @return array{
      *     clock_in: ?string,
      *     clock_out: ?string,
      *     break_total: ?string,
@@ -173,10 +236,9 @@ class AttendanceService
      *     attendance_id: ?int
      * }
      */
-    private function buildListRow(Carbon $date, ?Attendance $attendance): array
+    public function formatAttendanceSummary(?Attendance $attendance): array
     {
         $row = [
-            'date_label' => $date->locale('ja')->isoFormat('M/D(ddd)'),
             'clock_in' => null,
             'clock_out' => null,
             'break_total' => null,
