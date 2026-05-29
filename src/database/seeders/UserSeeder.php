@@ -16,8 +16,12 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
         ]);
 
-        User::factory()->count(5)->create([
-            'password' => Hash::make('password'),
-        ]);
+        foreach (range(1, 5) as $i) {
+            User::factory()->create([
+                'name' => "一般ユーザー{$i}",
+                'email' => "user{$i}@example.com",
+                'password' => Hash::make('password'),
+            ]);
+        }
     }
 }
