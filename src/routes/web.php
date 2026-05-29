@@ -50,6 +50,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     Route::get('/admin/attendance/list', [AdminAttendanceListController::class, 'index'])
         ->name('admin.attendance.list');
+    Route::get('/admin/attendance/staff/{user}/csv', [AdminStaffAttendanceController::class, 'csv'])
+        ->name('admin.attendance.staff.csv');
     Route::get('/admin/attendance/staff/{user}', [AdminStaffAttendanceController::class, 'show'])
         ->name('admin.attendance.staff.show');
     Route::get('/admin/attendance/{attendance}', [AdminAttendanceController::class, 'show'])

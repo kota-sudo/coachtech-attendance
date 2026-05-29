@@ -55,6 +55,8 @@
         .tab-link.is-active { color: #000; font-weight: 600; border-bottom-color: #000; }
         .tab-link:hover { color: #000; }
         .cell-note { max-width: 240px; text-align: left; word-break: break-word; }
+                .staff-name { font-size: 1rem; margin: 0 0 1rem; font-weight: 600; }
+        .list-actions { margin-bottom: 1rem; }
         .flash-status { background: #ecfdf5; color: #047857; padding: .75rem; border-radius: 4px; margin: 0 0 1rem; }
     </style>
 </head>
