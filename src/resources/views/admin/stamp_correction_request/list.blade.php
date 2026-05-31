@@ -21,13 +21,11 @@
     @endif
 
     <div class="application__tab">
-        <div class="application__tab--links">
-            <a class="application__tab--link {{ $status === AttendanceCorrectionRequestStatus::Pending ? 'is-active' : '' }}"
-               href="/stamp_correction_request/list?status=pending">承認待ち</a>
-            <a class="application__tab--link {{ $status === AttendanceCorrectionRequestStatus::Approved ? 'is-active' : '' }}"
-               href="/stamp_correction_request/list?status=approved">承認済み</a>
-        </div>
-        <div class="tab__content" style="display: block; border-top: none; margin-top: 0;">
+        <input class="application__tab--input" id="tab1" type="radio" name="tab_item" @checked($status === AttendanceCorrectionRequestStatus::Pending) onchange="window.location.href='/stamp_correction_request/list?status=pending'">
+        <label class="application__tab--label" for="tab1">承認待ち</label>
+        <input class="application__tab--input" id="tab2" type="radio" name="tab_item" @checked($status === AttendanceCorrectionRequestStatus::Approved) onchange="window.location.href='/stamp_correction_request/list?status=approved'">
+        <label class="application__tab--label" for="tab2">承認済み</label>
+        <div class="tab__content tab__content--active">
             <table class="table">
                 <tr class="table__row">
                     <th class="table__header"><p class="table__header--item">状態</p></th>
@@ -39,31 +37,15 @@
                 </tr>
                 @forelse ($requests as $correctionRequest)
                     <tr class="table__row">
-                        <td class="table__description">
-                            <p class="table__description--item">{{ $correctionRequest->status === AttendanceCorrectionRequestStatus::Pending ? '承認待ち' : '承認済み' }}</p>
-                        </td>
-                        <td class="table__description">
-                            <p class="table__description--item">{{ $correctionRequest->attendance->user->name }}</p>
-                        </td>
-                        <td class="table__description">
-                            <p class="table__description--item">{{ $correctionRequest->attendance->work_date->locale('ja')->isoFormat('YYYY年M月D日(ddd)') }}</p>
-                        </td>
-                        <td class="table__description">
-                            <p class="table__description--item">{{ $correctionRequest->requested_note ?: 'なし' }}</p>
-                        </td>
-                        <td class="table__description">
-                            <p class="table__description--item">{{ $correctionRequest->created_at->timezone('Asia/Tokyo')->format('Y/m/d H:i') }}</p>
-                        </td>
-                        <td class="table__description">
-                            <a class="table__item--detail-link" href="/stamp_correction_request/approve/{{ $correctionRequest->id }}">詳細</a>
-                        </td>
+                        <td class="table__description"><p class="table__description--item">{{ $correctionRequest->status === AttendanceCorrectionRequestStatus::Pending ? '承認待ち' : '承認済み' }}</p></td>
+                        <td class="table__description"><p class="table__description--item">{{ $correctionRequest->attendance->user->name }}</p></td>
+                        <td class="table__description"><p class="table__description--item">{{ $correctionRequest->attendance->work_date->locale('ja')->isoFormat('YYYY年M月D日(ddd)') }}</p></td>
+                        <td class="table__description"><p class="table__description--item">{{ $correctionRequest->requested_note ?: 'なし' }}</p></td>
+                        <td class="table__description"><p class="table__description--item">{{ $correctionRequest->created_at->timezone('Asia/Tokyo')->format('Y/m/d H:i') }}</p></td>
+                        <td class="table__description"><a class="table__item--detail-link" href="/stamp_correction_request/approve/{{ $correctionRequest->id }}">詳細</a></td>
                     </tr>
                 @empty
-                    <tr class="table__row">
-                        <td class="table__description" colspan="6">
-                            <p class="table__description--item">申請がありません</p>
-                        </td>
-                    </tr>
+                    <tr class="table__row"><td class="table__description" colspan="6"><p class="table__description--item">申請がありません</p></td></tr>
                 @endforelse
             </table>
         </div>

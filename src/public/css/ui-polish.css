@@ -1,0 +1,47 @@
+.form__input[type="time"] {
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.form__input[type="time"]::-webkit-calendar-picker-indicator {
+    display: none;
+}
+
+.detail-pending-message {
+    color: #FF0000;
+    font-weight: bold;
+    margin-top: 1.5rem;
+    text-align: center;
+}
+
+.application__tab--label-link {
+    color: #737373;
+    cursor: pointer;
+    font-size: 16px;
+    text-decoration: none;
+}
+
+.application__tab--label-link.is-active {
+    color: #000;
+    font-weight: bold;
+}
+
+.application__tab--nav {
+    display: flex;
+    gap: 70px;
+    margin-left: 50px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #000;
+}
+
+.form__button--submit {
+    background: #000;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    height: 50px;
+    padding: 10px 40px;
+}

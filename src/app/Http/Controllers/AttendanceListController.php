@@ -6,6 +6,7 @@ use App\Http\Requests\Attendance\StoreAttendanceCorrectionRequest;
 use App\Models\Attendance;
 use App\Services\AttendanceCorrectionService;
 use App\Services\AttendanceService;
+use App\Support\AttendanceDetailPresenter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -36,14 +37,17 @@ class AttendanceListController extends Controller
         $breakRowCount = $attendance->breakTimes->count() + 1;
         $hasPending = $attendance->hasPendingCorrectionRequest();
 
-        return view('attendance.detail', [
-            'attendance' => $attendance,
-            'breakRowCount' => $breakRowCount,
-            'hasPending' => $hasPending,
-            'defaultClockIn' => old('requested_clock_in', $attendance->clock_in?->timezone('Asia/Tokyo')->format('H:i')),
-            'defaultClockOut' => old('requested_clock_out', $attendance->clock_out?->timezone('Asia/Tokyo')->format('H:i')),
-            'defaultNote' => old('requested_note', ''),
-        ]);
+        return view('attendance.detail', array_merge(
+            AttendanceDetailPresenter::present($attendance),
+            [
+                'attendance' => $attendance,
+                'breakRowCount' => $breakRowCount,
+                'hasPending' => $hasPending,
+                'defaultClockIn' => old('requested_clock_in', $attendance->clock_in?->timezone('Asia/Tokyo')->format('H:i')),
+                'defaultClockOut' => old('requested_clock_out', $attendance->clock_out?->timezone('Asia/Tokyo')->format('H:i')),
+                'defaultNote' => old('requested_note', ''),
+            ],
+        ));
     }
 
     public function store(StoreAttendanceCorrectionRequest $request, Attendance $attendance): RedirectResponse

@@ -56,20 +56,6 @@ main{
     padding-bottom: 2px;
 }
 
-.application__tab--link {
-    color: #737373;
-    cursor: pointer;
-    font-size: 16px;
-    margin-right: 70px;
-    text-decoration: none;
-}
-
-.application__tab--link.is-active {
-    color: #000;
-    font-weight: bold;
-}
-
-.application__tab--links {
     border-bottom: 1px solid #000;
     margin-top: 15px;
     padding-bottom: 15px;
@@ -99,4 +85,58 @@ main{
     font-weight: bold;
     padding: 5px 15px;
     text-decoration: none;
+}
+
+.header__inner {
+    max-width: 1540px;
+    margin: 0 auto;
+}
+
+.tab__content--active {
+    border-top: none;
+    display: block;
+    margin-top: 0;
+}
+
+.inner__group--item.is-current {
+    border-bottom: none;
+    opacity: 1;
+}
+
+.verify-email__content {
+    margin: 0 auto;
+    max-width: 1540px;
+    padding: 50px 30px;
+    text-align: center;
+}
+
+.verify-email__heading {
+    font-size: 28px;
+    margin-bottom: 30px;
+}
+
+.verify-email__message {
+    line-height: 1.8;
+    margin-bottom: 30px;
+}
+
+.verify-email__button,
+.verify-email__resend {
+    background: #000;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 16px;
+    font-weight: bold;
+    margin: 10px;
+    padding: 12px 24px;
+    text-decoration: none;
+}
+
+.verify-email__resend {
+    background: #fff;
+    border: 1px solid #000;
+    color: #000;
 }

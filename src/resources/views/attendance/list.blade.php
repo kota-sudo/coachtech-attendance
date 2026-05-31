@@ -13,8 +13,12 @@
     </div>
     <div class="content__menu">
         <a class="previous-month" href="/attendance/list?month={{ $prevMonth }}">前月</a>
-        <p class="current-month">{{ $monthLabel }}</p>
-        <a class="next-month" href="/attendance/list?month={{ $nextMonth }}">翌月</a>
+        <p class="current-month">{{ $currentMonthDisplay ?? $monthLabel }}</p>
+        @if ($canGoNextMonth ?? false)
+            <a class="next-month" href="/attendance/list?month={{ $nextMonth }}">翌月</a>
+        @else
+            <div class="next-month-placeholder"></div>
+        @endif
     </div>
     <table class="table">
         <tr class="table__row">

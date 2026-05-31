@@ -1,6 +1,4 @@
-@extends('layouts.guest')
-
-@section('title', '会員登録')
+@extends('layouts.app')
 
 @section('css')
 <link rel="stylesheet" href="{{ asset('css/user/register.css') }}">
@@ -11,6 +9,9 @@
     <div class="register__heading">
         <h2 class="register__heading--item">会員登録</h2>
     </div>
+    @if (session('status'))
+        <div class="alert-success">{{ session('status') }}</div>
+    @endif
     <form class="form" method="POST" action="/register">
         @csrf
         <div class="form__group">
@@ -31,6 +32,7 @@
         <div class="form__group">
             <span class="form__label">パスワード確認</span>
             <input class="form__input" type="password" name="password_confirmation">
+            <div class="form__error">@error('password_confirmation'){{ $message }}@enderror</div>
         </div>
         <div class="form__button">
             <button class="form__button--submit" type="submit">登録する</button>

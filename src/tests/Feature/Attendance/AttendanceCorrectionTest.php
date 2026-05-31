@@ -74,7 +74,7 @@ class AttendanceCorrectionTest extends TestCase
 
         $response = $this->actingAs($user)->get(route('attendance.detail', $attendance));
 
-        $response->assertSee('承認待ちのため修正はできません。');
+        $response->assertSee('承認待ちのため修正できません');
     }
 
     public function test_pending_correction_request_prevents_submitting_new_correction(): void

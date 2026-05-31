@@ -60,7 +60,7 @@ class AdminTestCaseCoverageTest extends TestCase
         );
 
         $response->assertOk();
-        $response->assertSee(now('Asia/Tokyo')->addMonth()->format('Y年'), false);
+        $response->assertSee(now('Asia/Tokyo')->addMonth()->format('Y/m'), false);
     }
 
     public function test_admin_update_rejects_break_end_after_clock_out(): void

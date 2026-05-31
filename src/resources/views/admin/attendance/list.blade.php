@@ -14,7 +14,11 @@
     <div class="content__menu">
         <a class="previous-day" href="/admin/attendance/list?date={{ $prevDate }}">前日</a>
         <p class="current-day">{{ \Carbon\Carbon::parse($date)->format('Y/m/d') }}</p>
-        <a class="next-day" href="/admin/attendance/list?date={{ $nextDate }}">翌日</a>
+        @if ($canGoNextDate ?? false)
+            <a class="next-day" href="/admin/attendance/list?date={{ $nextDate }}">翌日</a>
+        @else
+            <div class="next-day-placeholder"></div>
+        @endif
     </div>
     <table class="table">
         <tr class="table__row">

@@ -1,25 +1,23 @@
-@extends('layouts.guest')
+@extends('layouts.app')
 
-@section('title', 'メール認証')
+@section('css')
+<link rel="stylesheet" href="{{ asset('css/user/user-login.css') }}">
+@endsection
 
 @section('content')
-    <h1>メール認証</h1>
-
+<div class="verify-email__content">
+    <h2 class="verify-email__heading">メール認証</h2>
     @if (session('status'))
         <p class="flash-status">{{ session('status') }}</p>
     @endif
-
-    <p class="verify-message">
+    <p class="verify-email__message">
         登録していただいたメールアドレスに認証メールを送付しました。<br>
         メール認証を完了してください。
     </p>
-
-    <div class="verify-actions">
-        <a href="{{ $verificationUrl }}" class="btn-verify-link">認証はこちらから</a>
-
-        <form method="POST" action="{{ route('verification.resend') }}">
-            @csrf
-            <button type="submit" class="btn-resend">認証メール再送</button>
-        </form>
-    </div>
+    <a href="{{ $verificationUrl }}" class="verify-email__button">認証はこちらから</a>
+    <form method="POST" action="{{ route('verification.resend') }}" style="display:inline;">
+        @csrf
+        <button type="submit" class="verify-email__resend">認証メール再送</button>
+    </form>
+</div>
 @endsection

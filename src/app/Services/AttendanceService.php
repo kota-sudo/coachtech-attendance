@@ -169,8 +169,10 @@ class AttendanceService
 
         return [
             'monthLabel' => $monthStart->locale('ja')->isoFormat('YYYY年M月'),
+            'currentMonthDisplay' => $monthStart->format('Y/m'),
             'prevMonth' => $monthStart->copy()->subMonth()->format('Y-m'),
             'nextMonth' => $monthStart->copy()->addMonth()->format('Y-m'),
+            'canGoNextMonth' => $monthStart->copy()->startOfMonth()->lt($this->today()->copy()->startOfMonth()),
             'rows' => $rows,
         ];
     }
@@ -223,6 +225,7 @@ class AttendanceService
             'date' => $date->format('Y-m-d'),
             'prevDate' => $date->copy()->subDay()->format('Y-m-d'),
             'nextDate' => $date->copy()->addDay()->format('Y-m-d'),
+            'canGoNextDate' => $date->copy()->startOfDay()->lt($this->today()),
             'rows' => $rows,
         ];
     }

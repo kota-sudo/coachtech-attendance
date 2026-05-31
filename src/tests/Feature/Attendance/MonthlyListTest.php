@@ -34,7 +34,7 @@ class MonthlyListTest extends TestCase
         $response = $this->actingAs($user)->get(route('attendance.list'));
 
         $response->assertOk();
-        $response->assertSee(now('Asia/Tokyo')->format('Y年'), false);
+        $response->assertSee(now('Asia/Tokyo')->format('Y/m'), false);
     }
 
     public function test_attendance_list_can_go_to_previous_month(): void
@@ -45,7 +45,7 @@ class MonthlyListTest extends TestCase
         $response = $this->actingAs($user)->get(route('attendance.list', ['month' => $prev]));
 
         $response->assertOk();
-        $response->assertSee(now('Asia/Tokyo')->subMonth()->format('Y年'), false);
+        $response->assertSee(now('Asia/Tokyo')->subMonth()->format('Y/m'), false);
     }
 
     public function test_clock_in_time_appears_on_monthly_list(): void

@@ -23,7 +23,7 @@ class TestCaseCoverageTest extends TestCase
         $response = $this->actingAs($user)->get(route('attendance.list', ['month' => $next]));
 
         $response->assertOk();
-        $response->assertSee(now('Asia/Tokyo')->addMonth()->format('Y年'), false);
+        $response->assertSee(now('Asia/Tokyo')->addMonth()->format('Y/m'), false);
     }
 
     public function test_attendance_list_detail_link_navigates_to_detail_page(): void

@@ -1,7 +1,5 @@
 @extends('layouts.app')
 
-@section('title', '勤怠詳細')
-
 @section('css')
 <link rel="stylesheet" href="{{ asset('css/user/user-detail.css') }}">
 @endsection
@@ -16,55 +14,57 @@
         <p class="flash-status">{{ session('status') }}</p>
     @endif
 
-    @if ($hasPending)
-        <div class="form">
+    <form class="form" method="POST" action="/attendance/detail/{{ $attendance->id }}">
+        @csrf
+
+        @if ($hasPending)
             <div class="form__content">
                 <div class="form__group">
                     <p class="form__header">名前</p>
                     <div class="form__input-group">
-                        <input class="form__input form__input--name" type="text" value="{{ $attendance->user->name }}" readonly>
+                        <input class="form__input form__input--name readonly" type="text" value="{{ $attendance->user->name }}" readonly>
                     </div>
                 </div>
                 <div class="form__group">
                     <p class="form__header">日付</p>
                     <div class="form__input-group">
-                        <input class="form__input" type="text" value="{{ $attendance->work_date->locale('ja')->isoFormat('YYYY年M月D日(ddd)') }}" readonly>
+                        <input class="form__input readonly" type="text" value="{{ $year }}" readonly>
+                        <input class="form__input readonly" type="text" value="{{ $datePart }}" readonly>
                     </div>
                 </div>
                 <div class="form__group">
                     <p class="form__header">出勤・退勤</p>
                     <div class="form__input-group">
-                        <input class="form__input" type="text" value="{{ $attendance->clock_in?->timezone('Asia/Tokyo')->format('H:i') }}" readonly>
+                        <input class="form__input readonly" type="text" value="{{ $pendingClockIn }}" readonly>
                         <p>〜</p>
-                        <input class="form__input" type="text" value="{{ $attendance->clock_out?->timezone('Asia/Tokyo')->format('H:i') }}" readonly>
+                        <input class="form__input readonly" type="text" value="{{ $pendingClockOut }}" readonly>
                     </div>
                 </div>
                 <div class="form__group form__break-group">
                     <p class="form__header">休憩</p>
                     <div class="form__input-wrapper">
-                        @forelse ($attendance->breakTimes as $break)
+                        @forelse ($pendingBreaks as $break)
                             <div class="form__input-group">
-                                <input class="form__input" type="text" value="{{ $break->break_start?->timezone('Asia/Tokyo')->format('H:i') }}" readonly>
+                                <input class="form__input readonly" type="text" value="{{ $break['start'] }}" readonly>
                                 <p>〜</p>
-                                <input class="form__input" type="text" value="{{ $break->break_end?->timezone('Asia/Tokyo')->format('H:i') }}" readonly>
+                                <input class="form__input readonly" type="text" value="{{ $break['end'] }}" readonly>
                             </div>
                         @empty
-                            <div class="form__input-group"><span>—</span></div>
+                            <div class="form__input-group"><input class="form__input readonly" type="text" value="" readonly></div>
                         @endforelse
                     </div>
                 </div>
                 <div class="form__group">
                     <p class="form__header">備考</p>
                     <div class="form__input-group">
-                        <textarea class="form__textarea" readonly>{{ $attendance->note ?: '—' }}</textarea>
+                        <input class="form__textarea readonly" type="text" value="{{ $pendingNote }}" readonly>
                     </div>
                 </div>
             </div>
-            <p class="detail-pending-message">承認待ちのため修正はできません。</p>
-        </div>
-    @else
-        <form class="form" method="POST" action="/attendance/detail/{{ $attendance->id }}">
-            @csrf
+            <div class="form__button">
+                <p class="readonly-message">承認待ちのため修正できません</p>
+            </div>
+        @else
             <div class="form__content">
                 <div class="form__group">
                     <p class="form__header">名前</p>
@@ -75,15 +75,16 @@
                 <div class="form__group">
                     <p class="form__header">日付</p>
                     <div class="form__input-group">
-                        <input class="form__input" type="text" value="{{ $attendance->work_date->locale('ja')->isoFormat('YYYY年M月D日(ddd)') }}" readonly>
+                        <input class="form__input" type="text" value="{{ $year }}" readonly>
+                        <input class="form__input" type="text" value="{{ $datePart }}" readonly>
                     </div>
                 </div>
                 <div class="form__group">
                     <p class="form__header">出勤・退勤</p>
                     <div class="form__input-group">
-                        <input class="form__input" type="time" name="requested_clock_in" value="{{ $defaultClockIn }}">
+                        <input class="form__input" type="text" name="requested_clock_in" value="{{ $defaultClockIn }}">
                         <p>〜</p>
-                        <input class="form__input" type="time" name="requested_clock_out" value="{{ $defaultClockOut }}">
+                        <input class="form__input" type="text" name="requested_clock_out" value="{{ $defaultClockOut }}">
                     </div>
                 </div>
                 <div class="error-message">
@@ -103,33 +104,44 @@
                                 $breakEnd = old("breaks.{$i}.break_end", $break?->break_end?->timezone('Asia/Tokyo')->format('H:i'));
                             @endphp
                             <div class="form__input-group">
-                                <input class="form__input" type="time" name="breaks[{{ $i }}][break_start]" value="{{ $breakStart }}">
+                                <input class="form__input" type="text" name="breaks[{{ $i }}][break_start]" value="{{ $breakStart }}">
                                 <p>〜</p>
-                                <input class="form__input" type="time" name="breaks[{{ $i }}][break_end]" value="{{ $breakEnd }}">
+                                <input class="form__input" type="text" name="breaks[{{ $i }}][break_end]" value="{{ $breakEnd }}">
                             </div>
-                            @error("breaks.{$i}.break_start")<p class="error">{{ $message }}</p>@enderror
-                            @error("breaks.{$i}.break_end")<p class="error">{{ $message }}</p>@enderror
                         @endfor
+                    </div>
+                </div>
+                <div class="error-message">
+                    <div></div>
+                    <div class="error-message__item">
+                        @foreach ($errors->get('breaks.*.break_start') as $messages)
+                            @foreach ((array) $messages as $message)<p>{{ $message }}</p>@endforeach
+                        @endforeach
+                        @foreach ($errors->get('breaks.*.break_end') as $messages)
+                            @foreach ((array) $messages as $message)<p>{{ $message }}</p>@endforeach
+                        @endforeach
                     </div>
                 </div>
                 <div class="form__group">
                     <p class="form__header">備考</p>
                     <div class="form__input-group">
-                        <textarea class="form__textarea" readonly>{{ $attendance->note ?: '—' }}</textarea>
+                        @if ($attendance->note)
+                            <input class="form__textarea readonly" type="text" value="{{ $attendance->note }}" readonly>
+                        @endif
+                        <input class="form__textarea" name="requested_note" value="{{ $defaultNote }}">
                     </div>
                 </div>
-                <div class="form__group">
-                    <p class="form__header">修正理由</p>
-                    <div class="form__input-group">
-                        <textarea class="form__textarea" name="requested_note" rows="4">{{ $defaultNote }}</textarea>
-                        @error('requested_note')<p class="error">{{ $message }}</p>@enderror
+                <div class="error-message">
+                    <div></div>
+                    <div class="error-message__item">
+                        @error('requested_note')<p>{{ $message }}</p>@enderror
                     </div>
                 </div>
             </div>
             <div class="form__button">
                 <button class="form__button--submit" type="submit">修正</button>
             </div>
-        </form>
-    @endif
+        @endif
+    </form>
 </div>
 @endsection
