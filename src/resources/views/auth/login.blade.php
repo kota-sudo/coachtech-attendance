@@ -2,21 +2,36 @@
 
 @section('title', 'ログイン')
 
+@section('css')
+<link rel="stylesheet" href="{{ asset('css/user/user-login.css') }}">
+@endsection
+
 @section('content')
-    <h1>ログイン</h1>
-    <form method="POST" action="{{ url('/login') }}">
+<div class="login__content">
+    <div class="login__heading">
+        <h2 class="login__heading--item">ログイン</h2>
+    </div>
+    @if (session('status'))
+        <p class="flash-status">{{ session('status') }}</p>
+    @endif
+    <form class="form" method="POST" action="/login">
         @csrf
-        <label for="email">メールアドレス</label>
-        <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus>
-        @error('email')<p class="error">{{ $message }}</p>@enderror
-
-        <label for="password">パスワード</label>
-        <input id="password" type="password" name="password" required>
-        @error('password')<p class="error">{{ $message }}</p>@enderror
-
-        <button type="submit">ログインする</button>
+        <div class="form__group">
+            <span class="form__label">メールアドレス</span>
+            <input class="form__input" type="email" name="email" value="{{ old('email') }}">
+            <div class="form__error">@error('email'){{ $message }}@enderror</div>
+        </div>
+        <div class="form__group">
+            <span class="form__label">パスワード</span>
+            <input class="form__input" type="password" name="password">
+            <div class="form__error">@error('password'){{ $message }}@enderror</div>
+        </div>
+        <div class="form__button">
+            <button class="form__button--submit" type="submit">ログインする</button>
+        </div>
     </form>
-    <p class="links">
-        <a href="{{ route('register') }}">会員登録はこちら</a>
-    </p>
+    <div class="register__link">
+        <a class="register__link--item" href="/register">会員登録はこちら</a>
+    </div>
+</div>
 @endsection

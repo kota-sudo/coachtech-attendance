@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.admin-app')
 
 @php
     use App\Enums\AttendanceCorrectionRequestStatus;
@@ -7,55 +7,70 @@
 
 @section('title', '修正申請承認')
 
+@section('css')
+<link rel="stylesheet" href="{{ asset('css/admin/admin-application-detail.css') }}">
+@endsection
 
 @section('content')
-    <div class="list-card detail-card">
-        @if (session('status'))
-            <p class="flash-status">{{ session('status') }}</p>
-        @endif
-
-        @if (! $isPending)
-            <p class="detail-pending-message" style="color: #047857;">承認済み</p>
-        @endif
-
-        <dl class="detail-display">
-            <div class="detail-row">
-                <dt>名前</dt>
-                <dd>{{ $attendance->user->name }}</dd>
+<div class="detail__content">
+    <div class="detail__header">
+        <h2 class="content__header--item">勤怠詳細</h2>
+    </div>
+    @if (session('status'))
+        <p class="flash-status">{{ session('status') }}</p>
+    @endif
+    <form class="applied-form" method="POST" action="/stamp_correction_request/approve/{{ $correctionRequest->id }}">
+        @csrf
+        <div class="applied-form__content">
+            <div class="applied-form__group">
+                <p class="applied-form__header">名前</p>
+                <div class="applied-form__input-group">
+                    <input class="applied-form__input" type="text" value="{{ $attendance->user->name }}" readonly>
+                </div>
             </div>
-            <div class="detail-row">
-                <dt>日付</dt>
-                <dd>{{ $attendance->work_date->locale('ja')->isoFormat('YYYY年M月D日(ddd)') }}</dd>
+            <div class="applied-form__group">
+                <p class="applied-form__header">日付</p>
+                <div class="applied-form__input-group">
+                    <input class="applied-form__input" type="text" value="{{ $attendance->work_date->format('Y年') }}" readonly>
+                    <input class="applied-form__input" type="text" value="{{ $attendance->work_date->format('m月d日') }}" readonly>
+                </div>
             </div>
-            <div class="detail-row">
-                <dt>申請後の出勤時間</dt>
-                <dd>{{ $correctionRequest->requested_clock_in?->timezone('Asia/Tokyo')->format('H:i') }}</dd>
+            <div class="applied-form__group">
+                <p class="applied-form__header">出勤・退勤</p>
+                <div class="applied-form__input-group">
+                    <input class="applied-form__input" type="text" value="{{ $correctionRequest->requested_clock_in?->timezone('Asia/Tokyo')->format('H:i') }}" readonly>
+                    <p class="wavy-line">〜</p>
+                    <input class="applied-form__input" type="text" value="{{ $correctionRequest->requested_clock_out?->timezone('Asia/Tokyo')->format('H:i') }}" readonly>
+                </div>
             </div>
-            <div class="detail-row">
-                <dt>申請後の退勤時間</dt>
-                <dd>{{ $correctionRequest->requested_clock_out?->timezone('Asia/Tokyo')->format('H:i') }}</dd>
-            </div>
-            <div class="detail-row">
-                <dt>申請後の休憩時間</dt>
-                <dd>
+            <div class="applied-form__group form__break-group">
+                <p class="applied-form__header">休憩</p>
+                <div class="applied-form__input-wrapper">
                     @forelse ($correctionRequest->correctionBreaks as $break)
-                        <div>{{ $break->break_start?->timezone('Asia/Tokyo')->format('H:i') }} 〜 {{ $break->break_end?->timezone('Asia/Tokyo')->format('H:i') }}</div>
+                        <div class="applied-form__input-group">
+                            <input class="applied-form__input readonly" type="text" value="{{ $break->break_start?->timezone('Asia/Tokyo')->format('H:i') }}" readonly>
+                            <p>〜</p>
+                            <input class="applied-form__input readonly" type="text" value="{{ $break->break_end?->timezone('Asia/Tokyo')->format('H:i') }}" readonly>
+                        </div>
                     @empty
                         <span>—</span>
                     @endforelse
-                </dd>
+                </div>
             </div>
-            <div class="detail-row">
-                <dt>申請理由</dt>
-                <dd>{{ $correctionRequest->requested_note }}</dd>
+            <div class="applied-form__group">
+                <p class="applied-form__header">備考</p>
+                <div class="applied-form__input-group">
+                    <textarea class="applied-form__textarea" readonly>{{ $correctionRequest->requested_note }}</textarea>
+                </div>
             </div>
-        </dl>
-
-        @if ($isPending)
-            <form method="POST" action="{{ route('stamp_correction_request.approve.store', $correctionRequest) }}" class="detail-form">
-                @csrf
-                <button type="submit" class="btn btn-primary">承認</button>
-            </form>
-        @endif
-    </div>
+        </div>
+        <div class="applied-form__button">
+            @if ($isPending)
+                <button class="applied-form__button--submit" type="submit">承認</button>
+            @else
+                <p class="applied-form__status">承認済み</p>
+            @endif
+        </div>
+    </form>
+</div>
 @endsection

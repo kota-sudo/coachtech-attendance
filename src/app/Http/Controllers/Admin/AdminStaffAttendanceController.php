@@ -37,7 +37,7 @@ class AdminStaffAttendanceController extends Controller
         $month = $this->attendanceService->parseMonth($monthParam)->format('Y-m');
         $listData = $this->attendanceService->buildMonthlyList($user, $monthParam);
         $csvContent = $this->buildCsvContent($listData['rows']);
-        $filename = sprintf('attendance_%d_%s.csv', $user->id, $month);
+        $filename = sprintf('attendance_%s_%s.csv', $this->sanitizeFilename($user->name), $month);
 
         return response($csvContent, 200, [
             'Content-Type' => 'text/csv; charset=UTF-8',
@@ -81,5 +81,12 @@ class AdminStaffAttendanceController extends Controller
         fclose($handle);
 
         return $content === false ? '' : $content;
+    }
+
+    private function sanitizeFilename(string $name): string
+    {
+        $sanitized = preg_replace('/[\\\\\\/:*?"<>|]/u', '_', $name);
+
+        return $sanitized === '' || $sanitized === null ? 'staff' : $sanitized;
     }
 }

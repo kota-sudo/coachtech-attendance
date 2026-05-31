@@ -5,6 +5,7 @@ namespace Tests\Feature\Auth;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 class AuthenticationTest extends TestCase
@@ -67,8 +68,24 @@ class AuthenticationTest extends TestCase
         $response->assertSessionHasErrors(['password' => 'パスワードと一致しません']);
     }
 
+    public function test_registration_rejects_duplicate_email(): void
+    {
+        User::factory()->create(['email' => 'existing@example.com']);
+
+        $response = $this->post('/register', [
+            'name' => 'テストユーザー',
+            'email' => 'existing@example.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+        ]);
+
+        $response->assertSessionHasErrors(['email' => 'このメールアドレスは既に登録されています']);
+    }
+
     public function test_user_can_register_successfully(): void
     {
+        Notification::fake();
+
         $response = $this->post('/register', [
             'name' => 'テストユーザー',
             'email' => 'newuser@example.com',
@@ -76,7 +93,7 @@ class AuthenticationTest extends TestCase
             'password_confirmation' => 'password123',
         ]);
 
-        $response->assertRedirect('/attendance');
+        $response->assertRedirect(route('verification.notice'));
         $this->assertAuthenticated();
         $this->assertDatabaseHas('users', [
             'email' => 'newuser@example.com',
@@ -138,6 +155,6 @@ class AuthenticationTest extends TestCase
 
         $response = $this->actingAs($admin)->get('/attendance');
 
-        $response->assertRedirect(route('login'));
+        $response->assertRedirect(route('admin.attendance.list'));
     }
 }

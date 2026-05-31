@@ -19,11 +19,11 @@ class RegisteredUserController extends Controller
     public function store(RegisterRequest $request, CreatesNewUsers $creator): RedirectResponse
     {
         $user = $creator->create($request->validated());
+        $user->sendEmailVerificationNotification();
 
         Auth::login($user);
-
         $request->session()->regenerate();
 
-        return redirect('/attendance');
+        return redirect()->route('verification.notice');
     }
 }

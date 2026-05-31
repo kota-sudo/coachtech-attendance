@@ -110,7 +110,7 @@ class AttendanceService
     public function parseMonth(?string $month): Carbon
     {
         if ($month !== null && preg_match('/^\d{4}-\d{2}$/', $month)) {
-            return Carbon::createFromFormat('Y-m', $month, self::TIMEZONE)->startOfMonth();
+            return Carbon::createFromFormat('!Y-m-d', $month.'-01', self::TIMEZONE)->startOfDay();
         }
 
         return $this->today()->copy()->startOfMonth();
@@ -119,7 +119,7 @@ class AttendanceService
     public function parseDate(?string $date): Carbon
     {
         if ($date !== null && preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
-            return Carbon::parse($date, self::TIMEZONE)->startOfDay();
+            return Carbon::createFromFormat('!Y-m-d', $date, self::TIMEZONE)->startOfDay();
         }
 
         return $this->today();

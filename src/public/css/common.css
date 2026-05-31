@@ -1,0 +1,102 @@
+* {
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: bold;
+    font-style: normal;
+}
+
+.header {
+    background: #000;
+    width: 100%;
+}
+
+.header__inner {
+    align-items: center;
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.inner__group--item {
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.inner__group--item:not(:last-child) {
+    margin-right: 10px;
+}
+
+.logout-button {
+    background: #000;
+    border: none;
+    color: #fff;
+    font-weight: bold;
+    padding: 0;
+}
+main{
+    height: 100vh;
+}
+
+.header__logo--img {
+    height: 36px;
+    display: block;
+}
+
+.inner__group {
+    align-items: center;
+    display: flex;
+    gap: 10px;
+}
+
+.inner__group--item.is-current {
+    border-bottom: 2px solid #fff;
+    padding-bottom: 2px;
+}
+
+.application__tab--link {
+    color: #737373;
+    cursor: pointer;
+    font-size: 16px;
+    margin-right: 70px;
+    text-decoration: none;
+}
+
+.application__tab--link.is-active {
+    color: #000;
+    font-weight: bold;
+}
+
+.application__tab--links {
+    border-bottom: 1px solid #000;
+    margin-top: 15px;
+    padding-bottom: 15px;
+}
+
+.flash-status {
+    color: #0073CC;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.form__error,
+.error {
+    color: #FF0000;
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+.csv-button__submit {
+    background: #000;
+    border: none;
+    border-radius: 5px;
+    color: #FFF;
+    display: inline-block;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 5px 15px;
+    text-decoration: none;
+}

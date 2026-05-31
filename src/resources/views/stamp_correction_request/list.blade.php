@@ -6,59 +6,67 @@
 
 @section('title', '申請一覧')
 
+@section('css')
+<link rel="stylesheet" href="{{ asset('css/user/user-application-list.css') }}">
+@endsection
 
 @section('content')
-    <div class="list-card">
-        @if (session('status'))
-            <p class="flash-status">{{ session('status') }}</p>
-        @endif
+<div class="application-list__content">
+    <div class="content__header">
+        <h2 class="content__header--item">申請一覧</h2>
+    </div>
 
-        <nav class="tab-nav">
-            <a href="{{ route('stamp_correction_request.list', ['status' => 'pending']) }}"
-               class="tab-link {{ $status === AttendanceCorrectionRequestStatus::Pending ? 'is-active' : '' }}">
-                承認待ち
-            </a>
-            <a href="{{ route('stamp_correction_request.list', ['status' => 'approved']) }}"
-               class="tab-link {{ $status === AttendanceCorrectionRequestStatus::Approved ? 'is-active' : '' }}">
-                承認済み
-            </a>
-        </nav>
+    @if (session('status'))
+        <p class="flash-status">{{ session('status') }}</p>
+    @endif
 
-        <div class="table-wrap">
-            <table class="attendance-table">
-                <thead>
-                    <tr>
-                        <th>状態</th>
-                        <th>名前</th>
-                        <th>対象日時</th>
-                        <th>申請理由</th>
-                        <th>申請日時</th>
-                        <th>詳細</th>
+    <div class="application__tab">
+        <div class="application__tab--links">
+            <a class="application__tab--link {{ $status === AttendanceCorrectionRequestStatus::Pending ? 'is-active' : '' }}"
+               href="/stamp_correction_request/list?status=pending">承認待ち</a>
+            <a class="application__tab--link {{ $status === AttendanceCorrectionRequestStatus::Approved ? 'is-active' : '' }}"
+               href="/stamp_correction_request/list?status=approved">承認済み</a>
+        </div>
+        <div class="tab__content" style="display: block; border-top: none; margin-top: 0;">
+            <table class="table">
+                <tr class="table__row">
+                    <th class="table__header"><p class="table__header--item">状態</p></th>
+                    <th class="table__header"><p class="table__header--item">名前</p></th>
+                    <th class="table__header"><p class="table__header--item">対象日時</p></th>
+                    <th class="table__header"><p class="table__header--item">申請理由</p></th>
+                    <th class="table__header"><p class="table__header--item">申請日時</p></th>
+                    <th class="table__header"><p class="table__header--item">詳細</p></th>
+                </tr>
+                @forelse ($requests as $correctionRequest)
+                    <tr class="table__row">
+                        <td class="table__description">
+                            <p class="table__description--item">{{ $correctionRequest->status === AttendanceCorrectionRequestStatus::Pending ? '承認待ち' : '承認済み' }}</p>
+                        </td>
+                        <td class="table__description">
+                            <p class="table__description--item">{{ $correctionRequest->attendance->user->name }}</p>
+                        </td>
+                        <td class="table__description">
+                            <p class="table__description--item">{{ $correctionRequest->attendance->work_date->locale('ja')->isoFormat('YYYY年M月D日(ddd)') }}</p>
+                        </td>
+                        <td class="table__description">
+                            <p class="table__description--item">{{ $correctionRequest->requested_note ?: 'なし' }}</p>
+                        </td>
+                        <td class="table__description">
+                            <p class="table__description--item">{{ $correctionRequest->created_at->timezone('Asia/Tokyo')->format('Y/m/d H:i') }}</p>
+                        </td>
+                        <td class="table__description">
+                            <a class="table__item--detail-link" href="/attendance/detail/{{ $correctionRequest->attendance_id }}">詳細</a>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    @forelse ($requests as $correctionRequest)
-                        <tr>
-                            <td>{{ $correctionRequest->status === AttendanceCorrectionRequestStatus::Pending ? '承認待ち' : '承認済み' }}</td>
-                            <td>{{ $correctionRequest->attendance->user->name }}</td>
-                            <td>{{ $correctionRequest->attendance->work_date->locale('ja')->isoFormat('YYYY年M月D日(ddd)') }}</td>
-                            <td class="cell-note">{{ $correctionRequest->requested_note }}</td>
-                            <td>{{ $correctionRequest->created_at->timezone('Asia/Tokyo')->format('Y/m/d H:i') }}</td>
-                            <td>
-                                @if ($isAdmin)
-                                    <a href="{{ route('stamp_correction_request.approve.show', $correctionRequest) }}">詳細</a>
-                                @else
-                                    <a href="{{ route('attendance.detail', $correctionRequest->attendance_id) }}">詳細</a>
-                                @endif
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6">申請がありません</td>
-                        </tr>
-                    @endforelse
-                </tbody>
+                @empty
+                    <tr class="table__row">
+                        <td class="table__description" colspan="6">
+                            <p class="table__description--item">申請がありません</p>
+                        </td>
+                    </tr>
+                @endforelse
             </table>
         </div>
     </div>
+</div>
 @endsection

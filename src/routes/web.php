@@ -8,9 +8,12 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceListController;
 use App\Http\Controllers\Auth\AdminAuthenticatedSessionController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\EmailVerificationController;
+use App\Http\Controllers\Auth\EmailVerificationNoticeController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\StampCorrectionRequestApproveController;
 use App\Http\Controllers\StampCorrectionRequestListController;
+use Illuminate\Auth\Middleware\EnsureEmailIsVerified;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -28,12 +31,23 @@ Route::middleware('guest')->group(function () {
     Route::post('/admin/login', [AdminAuthenticatedSessionController::class, 'store']);
 });
 
+Route::get('/email/verify/{id}/{hash}', EmailVerificationController::class)
+    ->middleware(['signed'])
+    ->name('verification.verify');
+
 Route::middleware('auth')->group(function () {
+    Route::get('/email/verify', [EmailVerificationNoticeController::class, 'show'])
+        ->name('verification.notice');
+    Route::post('/email/verify/resend', [EmailVerificationNoticeController::class, 'resend'])
+        ->name('verification.resend');
+});
+
+Route::middleware(['auth', EnsureEmailIsVerified::class])->group(function () {
     Route::get('/stamp_correction_request/list', [StampCorrectionRequestListController::class, 'index'])
         ->name('stamp_correction_request.list');
 });
 
-Route::middleware(['auth', 'user'])->group(function () {
+Route::middleware(['auth', 'user', EnsureEmailIsVerified::class])->group(function () {
     Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance');
     Route::post('/attendance/clock-in', [AttendanceController::class, 'clockIn'])->name('attendance.clock-in');
     Route::post('/attendance/break-in', [AttendanceController::class, 'breakIn'])->name('attendance.break-in');

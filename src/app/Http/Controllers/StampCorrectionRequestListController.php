@@ -24,10 +24,13 @@ class StampCorrectionRequestListController extends Controller
             $query->whereHas('attendance', fn ($q) => $q->where('user_id', $user->id));
         }
 
-        return view('stamp_correction_request.list', [
+        $view = $isAdmin
+            ? 'admin.stamp_correction_request.list'
+            : 'stamp_correction_request.list';
+
+        return view($view, [
             'status' => $status,
             'requests' => $query->get(),
-            'isAdmin' => $isAdmin,
         ]);
     }
 

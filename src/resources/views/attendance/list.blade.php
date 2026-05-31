@@ -2,44 +2,43 @@
 
 @section('title', '勤怠一覧')
 
+@section('css')
+<link rel="stylesheet" href="{{ asset('css/user/user-attendance-list.css') }}">
+@endsection
 
 @section('content')
-    <div class="list-card">
-        <div class="list-nav">
-            <a href="{{ route('attendance.list', ['month' => $prevMonth]) }}" class="btn btn-secondary btn-sm">前月</a>
-            <h2 class="list-month">{{ $monthLabel }}</h2>
-            <a href="{{ route('attendance.list', ['month' => $nextMonth]) }}" class="btn btn-secondary btn-sm">翌月</a>
-        </div>
-
-        <div class="table-wrap">
-            <table class="attendance-table">
-                <thead>
-                    <tr>
-                        <th>日付</th>
-                        <th>出勤</th>
-                        <th>退勤</th>
-                        <th>休憩</th>
-                        <th>合計</th>
-                        <th>詳細</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($rows as $row)
-                        <tr>
-                            <td>{{ $row['date_label'] }}</td>
-                            <td>{{ $row['clock_in'] }}</td>
-                            <td>{{ $row['clock_out'] }}</td>
-                            <td>{{ $row['break_total'] }}</td>
-                            <td>{{ $row['work_total'] }}</td>
-                            <td>
-                                @if ($row['attendance_id'])
-                                    <a href="{{ route('attendance.detail', $row['attendance_id']) }}">詳細</a>
-                                @endif
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+<div class="attendance-list__content">
+    <div class="content__header">
+        <h2 class="content__header--item">勤怠一覧</h2>
     </div>
+    <div class="content__menu">
+        <a class="previous-month" href="/attendance/list?month={{ $prevMonth }}">前月</a>
+        <p class="current-month">{{ $monthLabel }}</p>
+        <a class="next-month" href="/attendance/list?month={{ $nextMonth }}">翌月</a>
+    </div>
+    <table class="table">
+        <tr class="table__row">
+            <th class="table__header"><p class="table__header--item">日付</p></th>
+            <th class="table__header"><p class="table__header--item">出勤</p></th>
+            <th class="table__header"><p class="table__header--item">退勤</p></th>
+            <th class="table__header"><p class="table__header--item">休憩</p></th>
+            <th class="table__header"><p class="table__header--item">合計</p></th>
+            <th class="table__header"><p class="table__header--item">詳細</p></th>
+        </tr>
+        @foreach ($rows as $row)
+            <tr class="table__row">
+                <td class="table__description"><p class="table__description--item">{{ $row['date_label'] }}</p></td>
+                <td class="table__description"><p class="table__description--item">{{ $row['clock_in'] }}</p></td>
+                <td class="table__description"><p class="table__description--item">{{ $row['clock_out'] }}</p></td>
+                <td class="table__description"><p class="table__description--item">{{ $row['break_total'] }}</p></td>
+                <td class="table__description"><p class="table__description--item">{{ $row['work_total'] }}</p></td>
+                <td class="table__description">
+                    @if ($row['attendance_id'])
+                        <a class="table__item--detail-link" href="/attendance/detail/{{ $row['attendance_id'] }}">詳細</a>
+                    @endif
+                </td>
+            </tr>
+        @endforeach
+    </table>
+</div>
 @endsection

@@ -1,0 +1,38 @@
+.detail-card { max-width: 960px; margin: 0 auto; padding: 0; background: transparent; box-shadow: none; }
+.detail-form-card {
+    background: #fff;
+    border: 1px solid #e1e1e1;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.detail-form-row {
+    display: grid;
+    grid-template-columns: 30% 1fr;
+    align-items: center;
+    min-height: 60px;
+    border-bottom: 2px solid #e1e1e1;
+}
+.detail-form-row:last-child { border-bottom: none; }
+.detail-form-label {
+    color: #737373;
+    font-weight: 700;
+    padding: 1rem 1.5rem 1rem 2rem;
+}
+.detail-form-value {
+    padding: 1rem 2rem 1rem 0;
+    font-weight: 700;
+}
+.detail-form-value input[type=time],
+.detail-form-value textarea {
+    border: 1px solid #e1e1e1;
+    border-radius: 4px;
+    padding: .375rem .5rem;
+    font-weight: 700;
+}
+.detail-form-value input[type=time] { width: 100px; text-align: center; }
+.detail-form-value textarea { width: 100%; max-width: 420px; min-height: 80px; resize: vertical; }
+.break-input-row { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; margin-bottom: .5rem; }
+.detail-form-actions { text-align: right; margin-top: 2rem; }
+.staff-list-card { max-width: 960px; }
+.staff-list-card .attendance-table td:first-child,
+.staff-list-card .attendance-table th:first-child { text-align: left; padding-left: 2rem; }

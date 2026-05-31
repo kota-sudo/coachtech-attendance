@@ -2,26 +2,42 @@
 
 @section('title', '会員登録')
 
+@section('css')
+<link rel="stylesheet" href="{{ asset('css/user/register.css') }}">
+@endsection
+
 @section('content')
-    <h1>会員登録</h1>
-    <form method="POST" action="{{ url('/register') }}">
+<div class="register__content">
+    <div class="register__heading">
+        <h2 class="register__heading--item">会員登録</h2>
+    </div>
+    <form class="form" method="POST" action="/register">
         @csrf
-        <label for="name">お名前</label>
-        <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus>
-        @error('name')<p class="error">{{ $message }}</p>@enderror
-
-        <label for="email">メールアドレス</label>
-        <input id="email" type="email" name="email" value="{{ old('email') }}" required>
-        @error('email')<p class="error">{{ $message }}</p>@enderror
-
-        <label for="password">パスワード</label>
-        <input id="password" type="password" name="password" required>
-        @error('password')<p class="error">{{ $message }}</p>@enderror
-
-        <label for="password_confirmation">パスワード確認</label>
-        <input id="password_confirmation" type="password" name="password_confirmation" required>
-
-        <button type="submit">登録する</button>
+        <div class="form__group">
+            <span class="form__label">名前</span>
+            <input class="form__input" type="text" name="name" value="{{ old('name') }}">
+            <div class="form__error">@error('name'){{ $message }}@enderror</div>
+        </div>
+        <div class="form__group">
+            <span class="form__label">メールアドレス</span>
+            <input class="form__input" type="email" name="email" value="{{ old('email') }}">
+            <div class="form__error">@error('email'){{ $message }}@enderror</div>
+        </div>
+        <div class="form__group">
+            <span class="form__label">パスワード</span>
+            <input class="form__input" type="password" name="password">
+            <div class="form__error">@error('password'){{ $message }}@enderror</div>
+        </div>
+        <div class="form__group">
+            <span class="form__label">パスワード確認</span>
+            <input class="form__input" type="password" name="password_confirmation">
+        </div>
+        <div class="form__button">
+            <button class="form__button--submit" type="submit">登録する</button>
+        </div>
     </form>
-    <p class="links"><a href="{{ route('login') }}">ログインはこちら</a></p>
+    <div class="login__link">
+        <a class="login__link--item" href="/login">ログインはこちら</a>
+    </div>
+</div>
 @endsection

@@ -18,24 +18,25 @@ docker compose exec php bash
 ```bash
 composer install
 cp .env.example .env
+php artisan key:generate
+php artisan migrate:fresh --seed
 ```
 
-`.env` のデータベース設定を Docker 用に変更してください。
+`.env.example` には Docker 用の MySQL・MailHog・タイムゾーン設定が含まれています。必要に応じて `MAIL_FROM_ADDRESS` などを変更してください。
 
 ```env
+APP_URL=http://localhost:8080
+APP_TIMEZONE=Asia/Tokyo
 DB_CONNECTION=mysql
 DB_HOST=mysql
 DB_PORT=3306
 DB_DATABASE=attendance_db
 DB_USERNAME=attendance_user
 DB_PASSWORD=password
-```
-
-続けて以下を実行します。
-
-```bash
-php artisan key:generate
-php artisan migrate:fresh --seed
+MAIL_MAILER=smtp
+MAIL_HOST=mailhog
+MAIL_PORT=1025
+MAIL_FROM_ADDRESS="noreply@example.com"
 ```
 
 ## 使用技術
@@ -44,6 +45,7 @@ php artisan migrate:fresh --seed
 - Laravel
 - MySQL
 - Docker
+- MailHog
 - Fortify
 - PHPUnit
 
@@ -53,6 +55,7 @@ php artisan migrate:fresh --seed
 |------|-----|
 | アプリ | http://localhost:8080 |
 | phpMyAdmin | http://localhost:8081 |
+| MailHog（メール確認） | http://localhost:8026 |
 
 ## phpMyAdmin ログイン情報
 
@@ -74,7 +77,7 @@ php artisan migrate:fresh --seed
 
 ### 一般ユーザー
 
-Seeder で 5 名の一般ユーザーが作成されます。いずれもパスワードは `password` です。
+Seeder で 5 名の一般ユーザーが作成されます。いずれもパスワードは `password` です（メール認証済み）。
 
 | メールアドレス |
 |----------------|
@@ -92,7 +95,7 @@ Seeder で 5 名の一般ユーザーが作成されます。いずれもパス�
 
 ### 一般ユーザー
 
-- 一般ユーザー登録・ログイン
+- 一般ユーザー登録・メール認証・ログイン
 - 勤怠打刻（出勤・休憩・退勤）
 - 勤怠一覧（月次）
 - 勤怠詳細・修正申請
@@ -106,6 +109,33 @@ Seeder で 5 名の一般ユーザーが作成されます。いずれもパス�
 - スタッフ別月次勤怠一覧
 - 勤怠 CSV 出力
 - 修正申請一覧・承認
+
+## データベース設計
+
+### テーブル一覧
+
+| テーブル名 | 説明 |
+|-----------|------|
+| users | ユーザー（一般・管理者） |
+| attendances | 勤怠記録 |
+| break_times | 休憩記録 |
+| attendance_correction_requests | 修正申請 |
+| attendance_correction_breaks | 修正申請の休憩 |
+
+### リレーション
+
+- `users` 1 — N `attendances`
+- `attendances` 1 — N `break_times`
+- `attendances` 1 — N `attendance_correction_requests`
+- `attendance_correction_requests` 1 — N `attendance_correction_breaks`
+
+## メール認証の確認方法
+
+1. http://localhost:8080/register から新規登録
+2. **メール認証誘導画面**が表示される（「認証はこちらから」「認証メール再送」ボタンあり）
+3. http://localhost:8026 （MailHog）で認証メールを確認するか、誘導画面の「認証はこちらから」をクリック
+4. 認証完了後、**勤怠打刻画面（/attendance）** に遷移
+5. 未認証のままログインした場合も誘導画面へ遷移
 
 ## テスト実行方法
 

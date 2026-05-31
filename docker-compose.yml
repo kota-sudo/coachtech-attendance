@@ -61,6 +61,15 @@ services:
       mysql:
         condition: service_healthy
 
+  mailhog:
+    image: mailhog/mailhog
+    container_name: attendance_mailhog
+    ports:
+      - "1026:1025"
+      - "8026:8025"
+    networks:
+      - attendance
+
 networks:
   attendance:
     driver: bridge

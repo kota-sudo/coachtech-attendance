@@ -1,19 +1,46 @@
-@extends('layouts.guest')
-
-@section('title', '管理者ログイン')
-
-@section('content')
-    <h1>管理者ログイン</h1>
-    <form method="POST" action="{{ url('/admin/login') }}">
-        @csrf
-        <label for="email">メールアドレス</label>
-        <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus>
-        @error('email')<p class="error">{{ $message }}</p>@enderror
-
-        <label for="password">パスワード</label>
-        <input id="password" type="password" name="password" required>
-        @error('password')<p class="error">{{ $message }}</p>@enderror
-
-        <button type="submit">ログインする</button>
-    </form>
-@endsection
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>管理者ログイン</title>
+    <link rel="stylesheet" href="{{ asset('css/sanitize.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/common.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin/admin-login.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="header__inner">
+            <a class="header__logo" href="/admin/login">
+                <img class="header__logo--img" src="{{ asset('images/logo.svg') }}" alt="CoachTech">
+            </a>
+        </div>
+    </header>
+    <main>
+        <div class="login__content">
+            <div class="login__heading">
+                <h2 class="login__heading--item">管理者ログイン</h2>
+            </div>
+            <form class="form" method="POST" action="/admin/login">
+                @csrf
+                <div class="form__group">
+                    <span class="form__label">メールアドレス</span>
+                    <input class="form__input" type="email" name="email" value="{{ old('email') }}">
+                    <div class="form__error">@error('email'){{ $message }}@enderror</div>
+                </div>
+                <div class="form__group">
+                    <span class="form__label">パスワード</span>
+                    <input class="form__input" type="password" name="password">
+                    <div class="form__error">@error('password'){{ $message }}@enderror</div>
+                </div>
+                <div class="form__button">
+                    <button class="form__button--submit" type="submit">管理者ログインする</button>
+                </div>
+            </form>
+        </div>
+    </main>
+</body>
+</html>
